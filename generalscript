@@ -1,0 +1,345 @@
+local repo = 'https://raw.githubusercontent.com/wally-rblx/LinoriaLib/main/'
+local CoreGui = game:GetService("StarterGui") CoreGui:SetCore("SendNotification",{Title = "WHITELIST";Text = "Checking Whitelist.";Duration = 1;})
+wait(0.25)
+local hwidlist = loadstring(game:HttpGet(('https://raw.githubusercontent.com/GuiltHvH/seplotisteosrsttsr/main/accscfgaegwageoahoeughjpaepgaiemaipmekhie')))()
+local HWID = game:GetService('RbxAnalyticsService'):GetClientId()
+if not table.find(hwidlist, HWID) then game.Players.LocalPlayer:Kick("Not Whitelisted.") return end
+wait(0.25)
+local CoreGui = game:GetService("StarterGui") CoreGui:SetCore("SendNotification",{Title = "WHITELIST";Text = "Success!\n Thank you for using Spaced Out.";Duration = 5;})
+wait(0.25)
+
+if game:service('CoreGui'):findFirstChild('LogHolder') then 
+    local CoreGui = game:GetService("StarterGui") CoreGui:SetCore("SendNotification",{Title = "WHITELIST";Text = "Sorry, we've detected the script already running, aborting script execution process.";Duration = 5;})
+    return
+end
+
+local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
+local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
+local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
+
+local Window = Library:CreateWindow({
+    Title = 'SPACED OUT V2.0 : TESTING BRANCH',
+    Center = true, 
+    AutoShow = true,
+})
+
+local Tabs = {
+    
+    Main = Window:AddTab('Main'), -- Creates a new tab titled Main
+    ['LocalPlayer'] = Window:AddTab('Player'),
+    ['ServerScripts'] = Window:AddTab('Server Script'),
+    ['Visuals'] = Window:AddTab('Visuals'),
+    ['ESP'] = Window:AddTab('ESP'),
+    ['FunStuff'] = Window:AddTab('Misc'),
+    ['UI Settings'] = Window:AddTab('UI Settings'),
+}
+
+local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Main Scripts')
+local LPBOX = Tabs.LocalPlayer:AddLeftGroupbox('Local Scripts')
+local SSBOX = Tabs.ServerScripts:AddLeftGroupbox('Server Scripts')
+local VISBOX = Tabs.Visuals:AddLeftGroupbox('Visual Scripts')
+local ESPBOX = Tabs.ESP:AddLeftGroupbox('ESP Section')
+local MISCBOX = Tabs.FunStuff:AddLeftGroupbox('Fun Scripts')
+
+local LeftGroupBoxR = Tabs.Main:AddRightGroupbox('Main Buttons')
+local LPBOXR = Tabs.LocalPlayer:AddRightGroupbox('Local Buttons')
+local SSBOXR = Tabs.ServerScripts:AddRightGroupbox('Boosting')
+local VISBOXR = Tabs.Visuals:AddRightGroupbox('Visual Buttons')
+local ESPBOXR = Tabs.ESP:AddRightGroupbox('ESP Buttons')
+local MISCBOXR = Tabs.FunStuff:AddRightGroupbox('Fun Buttons')
+
+--//                                                                              toggles and shit lol                                                                       \\--
+
+_G.CL = false;
+_G.NOFOG = false;
+local InfiniteJumpEnabled = false;
+
+--//                                                                             End of Toggles and Shit                                                                     \\--
+
+local RunService = game:GetService("RunService")
+local LogHolder = Instance.new("ScreenGui")
+local Logs = Instance.new("Frame")
+local Scroll = Instance.new("ScrollingFrame")
+local Template = Instance.new("TextLabel")
+LogHolder.Name = "LogHolder"
+LogHolder.Parent = game.CoreGui
+Logs.Name = "Logs"
+Logs.Parent = LogHolder
+Logs.AnchorPoint = Vector2.new(0.5, 0.5)
+Logs.BackgroundColor3 = Color3.new(1, 1, 1)
+Logs.Position = UDim2.new(0.888, 0, 0.774, 0)
+Logs.Size = UDim2.new(0, 400, 0, 250)
+Logs.Style = Enum.FrameStyle.DropShadow
+Scroll.Name = "Scroll"
+Scroll.Parent = Logs
+Scroll.BackgroundColor3 = Color3.new(1, 1, 1)
+Scroll.BackgroundTransparency = 1
+Scroll.BorderSizePixel = 0
+Scroll.Size = UDim2.new(1, 0, 1, 0)
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.ScrollBarThickness = 6
+Template.Name = "Template"
+Template.Parent = Logs
+Template.BackgroundColor3 = Color3.new(1, 1, 1)
+Template.BackgroundTransparency = 1
+Template.Position = UDim2.new(0, 0, 0, -25)
+Template.Size = UDim2.new(1, 0, 0, 20)
+Template.Font = Enum.Font.ArialBold
+Template.Text = ""
+Template.TextColor3 = Color3.new(1, 1, 1)
+Template.TextSize = 15
+Template.TextXAlignment = Enum.TextXAlignment.Left
+Template.TextWrap = true
+Logs.Active = true
+Logs.Draggable = true
+local loggedTable = {}
+local getTotalSize = function()
+local totalSize = UDim2.new(0, 0, 0, 0)
+	for i, v in next, loggedTable do
+		totalSize = totalSize + UDim2.new(0, 0, 0, v.Size.Y.Offset)
+	end
+	return totalSize
+end
+local BUD = UDim2.new(0, 0, 0, 0)
+local TotalNum = 0
+local function GenLog(txt, colo, time)
+	local oldColo = Color3.fromRGB(0, 0, 0)	
+	local Temp = Template:Clone()
+	Temp.Parent = Scroll
+	Temp.Name = txt..'Logged'
+	Temp.Text = tostring(txt)
+	Temp.Visible = true
+	Temp.Position = BUD + UDim2.new(0, 0, 0, 0)
+	if colo then oldColo = colo Temp.TextColor3 = colo elseif not colo then Temp.TextColor3 = Color3.fromRGB(200, 200, 200) end
+
+	local timeVal = Instance.new('StringValue', Temp)
+	timeVal.Name = 'TimeVal'
+	timeVal.Value = time
+
+	TotalNum = TotalNum + 1
+	
+	if not Temp.TextFits then repeat Temp.Size = UDim2.new(Temp.Size.X.Scale, Temp.Size.X.Offset, Temp.Size.Y.Scale, Temp.Size.Y.Offset + 10)
+		Temp.Text = txt
+	until Temp.TextFits 
+end
+
+	BUD = BUD + UDim2.new(0, 0, 0, Temp.Size.Y.Offset)
+	
+	table.insert(loggedTable, Temp)
+	
+	local totSize = getTotalSize()
+	
+	if totSize.Y.Offset >= Scroll.CanvasSize.Y.Offset then Scroll.CanvasSize = UDim2.new(totSize.X.Scale, totSize.X.Offset, totSize.Y.Scale, totSize.Y.Offset + 100)
+	Scroll.CanvasPosition = Scroll.CanvasPosition + Vector2.new(0, totSize.Y.Offset) 
+	end
+	
+	return Temp
+end
+
+local ChatData = ""
+
+local LogPlr = function(plr)
+			plr.Chatted:connect(function(msg)
+				
+			local t = os.date("*t")
+			local dateDat = t['hour']..':'..t['min']..':'..t['sec']
+	
+			if string.len(msg) >= 1000 then return nil end
+			if string.sub(msg, 1, 1):match('%p') and string.sub(msg, 2, 2):match('%a') and string.len(msg) >= 5 then GenLog(plr.Name..': '..msg, Color3.new(255, 0, 0), dateDat) else
+			GenLog(plr.Name..': '..msg, Color3.new(255, 255, 255), dateDat)
+			end
+	end)
+end
+
+for i, v in pairs(game.Players:GetChildren()) do
+	LogPlr(v)
+end
+
+game.Players.PlayerAdded:connect(function(plr)
+	LogPlr(plr)
+end)
+
+----------------------------------------------------------// MAIN SECTION.
+
+LeftGroupBox:AddToggle('Chat Logger', {
+    Text = 'Chat Logger',
+    Default = false, -- Default value (true / false)
+    Tooltip = 'While enabled, enables a chat logger that the player can use to see chat.',
+})
+
+Toggles["Chat Logger"]:OnChanged(function()
+    task.spawn(function()
+       _G.CL = Toggles["Chat Logger"].Value
+       local logs = game.CoreGui:WaitForChild("LogHolder")
+       if _G.CL then
+           logs.Enabled = true
+       elseif not _G.CL then
+           logs.Enabled = false
+       end
+    end)
+end)
+
+local RejoinButton = LeftGroupBoxR:AddButton('Rejoin', function()
+    local tpservice = game:GetService("TeleportService")
+    local plr = game.Players.LocalPlayer
+    tpservice:Teleport(game.PlaceId, plr)
+end)
+RejoinButton:AddTooltip('Rejoins the designated server.')
+
+
+
+----------------------------------------------------------// LOCAL PLAYER SECTION.
+
+
+
+----------------------------------------------------------// SERVER SECTION.
+
+
+
+----------------------------------------------------------// Visuals SECTION.
+
+VISBOX:AddToggle('No Fog', {
+    Text = 'No Fog';
+    Default = false;
+    Tooltip = 'While enabled, disables all visual fog in the game.'
+})
+
+Toggles["No Fog"]:OnChanged(function()
+    task.spawn(function()
+       _G.NOFOG = Toggles["No Fog"].Value
+       
+        if _G.NOFOG then
+        for i,v in pairs(getconnections(game.Lighting.Changed)) do 
+            v:Disable()
+        end
+        while wait(1) and _G.NOFOG do
+            game.Lighting.FogEnd = 5000
+        end
+       elseif not _G.NOFOG then
+        for i,v in pairs(getconnections(game.Lighting.Changed)) do 
+            v:Enable()
+        end
+       end
+    end)
+end)
+
+
+
+----------------------------------------------------------// ESP SECTION.
+
+ESPBOX:AddToggle('Observe', {
+    Text = 'Observe',
+    Default = false, -- Default value (true / false)
+    Tooltip = 'While enabled, makes it so that vampires can not burn in the sunlight.', -- Information shown when you hover over the toggle
+})
+
+local UnnamedESP = ESPBOXR:AddButton("Unnamed ESP", function()
+    pcall(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/GuiltHvH/seplotisteosrsttsr/main/ajw09aj0j330fks0kt3kt3"))();end)
+end)
+UnnamedESP:AddTooltip('This is Unnamed Esp, you can not disable it, other than the controls it gives you.')
+
+Toggles["Observe"]:OnChanged(function()
+    
+    if Toggles["Observe"].Value == true then
+        gui = Instance.new("ScreenGui",game.CoreGui)
+gui.Name = "OBSERVE"
+nextb = Instance.new("TextButton", gui)
+nextb.Position = UDim2.new(0.88,0,0.9,0)
+nextb.Size = UDim2.new(0.1,0,0.07,0)
+nextb.Style = Enum.ButtonStyle.Custom
+nextb.TextScaled = true
+nextb.TextColor3 = Color3.fromRGB(35, 35, 35)
+nextb.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+nextb.TextStrokeTransparency = 0
+nextb.BackgroundTransparency = 0.35
+nextb.Name = "NEXT"
+nextb.Text = "Next"
+prevb = nextb:Clone()
+prevb.Position = UDim2.new(0.02,0,0.9,0)
+prevb.Text = "Previous"
+prevb.Name = "PREVIOUS"
+prevb.TextColor3 = Color3.fromRGB(35, 35, 35)
+prevb.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+prevb.TextStrokeTransparency = 0
+prevb.BackgroundTransparency = 0.35
+prevb.TextScaled = true
+prevb.Parent = gui
+plrNum = 1
+local x = Instance.new("UICorner",gui.NEXT)
+local x = Instance.new("UICorner",gui.PREVIOUS)
+for i,v in pairs(game.Players:GetPlayers()) do
+if i == plrNum then
+game.Workspace.Camera.CameraSubject = v.Character.Humanoid
+end
+end
+
+prevb.MouseButton1Down:connect(function()
+if plrNum ~= 1 then
+plrNum = plrNum - 1
+end
+for i,v in pairs(game.Players:GetPlayers()) do
+if i == plrNum then
+game.Workspace.Camera.CameraSubject = v.Character.Humanoid
+end
+end
+end)
+
+nextb.MouseButton1Down:connect(function()
+if plrNum < #game.Players:GetPlayers() then
+plrNum = plrNum + 1
+for i,v in pairs(game.Players:GetPlayers()) do
+if i == plrNum then
+game.Workspace.Camera.CameraSubject = v.Character.Humanoid
+end
+end
+end
+end)
+    elseif Toggles["Observe"].Value == false then
+        task.spawn(function()
+            game.Workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character.Humanoid
+            gui:Destroy()
+        end)
+    end
+end)
+
+----------------------------------------------------------// MISC SECTION.
+
+
+
+Library:SetWatermarkVisibility(false)
+
+-- Sets the watermark text
+Library:SetWatermark('SPACED OUT V2.0 MADE BY: Kyuro#5447')
+
+Library:OnUnload(function()
+    Library.Unloaded = true
+end)
+
+-- UI Settings
+local MenuGroup = Tabs['UI Settings']:AddLeftGroupbox('Menu')
+
+-- I set NoUI so it does not show up in the keybinds menu
+MenuGroup:AddButton('Unload', function() Library:Unload() end)
+MenuGroup:AddLabel('Menu bind'):AddKeyPicker('MenuKeybind', { Default = 'End', NoUI = true, Text = 'Menu keybind' }) 
+
+Library.ToggleKeybind = Options.MenuKeybind -- Allows you to have a custom keybind for the menu
+
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+
+SaveManager:IgnoreThemeSettings() 
+
+SaveManager:SetIgnoreIndexes({ 'MenuKeybind' }) 
+
+ThemeManager:SetFolder('MyScriptHub')
+SaveManager:SetFolder('MyScriptHub/specific-game')
+
+-- Builds our config menu on the right side of our tab
+SaveManager:BuildConfigSection(Tabs['UI Settings']) 
+
+-- Builds our theme menu (with plenty of built in themes) on the left side
+-- NOTE: you can also call ThemeManager:ApplyToGroupbox to add it to a specific groupbox
+ThemeManager:ApplyToTab(Tabs['UI Settings'])
+
+-- You can use the SaveManager:LoadAutoloadConfig() to load a config 
+-- which has been marked to be one that auto loads!
